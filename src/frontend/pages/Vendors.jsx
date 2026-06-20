@@ -1,12 +1,6 @@
 import { Card } from '../components/Card';
 
-const mockVendors = [
-  { id: 1, name: 'Tech Solutions GmbH', contact: 'sales@techsol.de', city: 'Berlin', phone: '+49 30 123456' },
-  { id: 2, name: 'Office Supplies Ltd', contact: 'info@officesupplies.de', city: 'Munich', phone: '+49 89 234567' },
-  { id: 3, name: 'Hardware Express', contact: 'support@hardwareexpress.de', city: 'Frankfurt', phone: '+49 69 345678' },
-];
-
-export function Vendors() {
+export function Vendors({ vendors = [], onNewVendor }) {
   return (
     <>
       <Card title="Vendors (Master Data)">
@@ -22,7 +16,7 @@ export function Vendors() {
             </tr>
           </thead>
           <tbody>
-            {mockVendors.map((vendor) => (
+            {vendors.map((vendor) => (
               <tr key={vendor.id}>
                 <td>
                   <strong>V-{String(vendor.id).padStart(3, '0')}</strong>
@@ -43,7 +37,9 @@ export function Vendors() {
       </Card>
 
       <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-        <button className="btn btn-primary">➕ New Vendor</button>
+        <button className="btn btn-primary" onClick={onNewVendor}>
+          ➕ New Vendor
+        </button>
         <button className="btn btn-secondary">📥 Import Vendors</button>
       </div>
     </>

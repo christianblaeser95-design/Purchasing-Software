@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { Modal } from './components/Modal';
 import { NewOrderForm } from './components/NewOrderForm';
+import { NewVendorForm } from './components/NewVendorForm';
 import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Vendors } from './pages/Vendors';
@@ -12,6 +13,8 @@ import './styles.css';
 export default function App() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
+  const [showNewVendorModal, setShowNewVendorModal] = useState(false);
+
   const [orders, setOrders] = useState([
     {
       id: 'PO-2024-001',
@@ -35,6 +38,12 @@ export default function App() {
     },
   ]);
 
+  const [vendors, setVendors] = useState([
+    { id: 1, name: 'Tech Solutions GmbH', contact: 'sales@techsol.de', city: 'Berlin', phone: '+49 30 123456' },
+    { id: 2, name: 'Office Supplies Ltd', contact: 'info@officesupplies.de', city: 'Munich', phone: '+49 89 234567' },
+    { id: 3, name: 'Hardware Express', contact: 'support@hardwareexpress.de', city: 'Frankfurt', phone: '+49 69 345678' },
+  ]);
+
   const pageTitles = {
     dashboard: 'Dashboard',
     purchasing: 'Purchasing Module',
@@ -48,6 +57,11 @@ export default function App() {
     setShowNewOrderModal(false);
   };
 
+  const handleNewVendor = (newVendor) => {
+    setVendors((prev) => [newVendor, ...prev]);
+    setShowNewVendorModal(false);
+  };
+
   const renderPage = () => {
     switch (activeMenu) {
       case 'dashboard':
@@ -57,7 +71,7 @@ export default function App() {
       case 'orders':
         return <Orders orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'vendors':
-        return <Vendors />;
+        return <Vendors vendors={vendors} onNewVendor={() => setShowNewVendorModal(true)} />;
       case 'items':
         return <Items />;
       default:
@@ -76,15 +90,17 @@ export default function App() {
         isOpen={showNewOrderModal}
         title="Create New Purchase Order"
         onClose={() => setShowNewOrderModal(false)}
-        footer={
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button className="btn btn-secondary" onClick={() => setShowNewOrderModal(false)}>
-              Cancel
-            </button>
-          </div>
-        }
       >
         <NewOrderForm onSubmit={handleNewOrder} onCancel={() => setShowNewOrderModal(false)} />
+      </Modal>
+
+      {/* New Vendor Modal */}
+      <Modal
+        isOpen={showNewVendorModal}
+        title="Create New Vendor"
+        onClose={() => setShowNewVendorModal(false)}
+      >
+        <NewVendorForm onSubmit={handleNewVendor} onCancel={() => setShowNewVendorModal(false)} />
       </Modal>
     </>
   );
