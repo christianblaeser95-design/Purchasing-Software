@@ -1,100 +1,131 @@
 import express from 'express';
+import {
+  initializeDatabase,
+  getOrders,
+  addOrder,
+  updateOrder,
+  deleteOrder,
+  getVendors,
+  addVendor,
+  updateVendor,
+  getItems,
+  addItem,
+  updateItem,
+} from './db.js';
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 3001;
 
 app.use(express.json());
 
-// In-Memory Store (später durch Datenbank ersetzen)
-let purchaseOrders = [
-  {
-    id: 'PO-2024-001',
-    vendor: 'Tech Solutions GmbH',
-    item: 'Laptops Dell',
-    quantity: 5,
-    unitPrice: 800,
-    totalAmount: 4000,
-    orderDate: '2024-06-15',
-    status: 'confirmed',
-  },
-  {
-    id: 'PO-2024-002',
-    vendor: 'Office Supplies Ltd',
-    item: 'Printer Paper A4',
-    quantity: 50,
-    unitPrice: 4.5,
-    totalAmount: 225,
-    orderDate: '2024-06-18',
-    status: 'open',
-  },
-];
-
-let vendors = [
-  { id: 1, name: 'Tech Solutions GmbH', contact: 'sales@techsol.de' },
-  { id: 2, name: 'Office Supplies Ltd', contact: 'info@officesupplies.de' },
-  { id: 3, name: 'Hardware Express', contact: 'support@hardwareexpress.de' },
-];
-
-let items = [
-  { id: 1, code: 'LAPTOP-001', name: 'Laptops Dell', price: 800 },
-  { id: 2, code: 'PAPER-A4', name: 'Printer Paper A4', price: 4.5 },
-  { id: 3, code: 'MONITOR-27', name: 'Monitor 27" 4K', price: 450 },
-  { id: 4, code: 'MOUSE-WIRELESS', name: 'Wireless Mouse', price: 25 },
-];
+// Initialize database on startup
+initializeDatabase().catch((err) => {
+  console.error('Failed to initialize database:', err);
+});
 
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Backend läuft! ✅' });
 });
 
-// Purchase Orders
-app.get('/api/orders', (req, res) => {
-  res.json(purchaseOrders);
+// ===== ORDERS =====
+app.get('/api/orders', async (req, res) => {
+  try {
+    const orders = await getOrders();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
 });
 
-app.post('/api/orders', (req, res) => {
-  const newOrder = {
-    ...req.body,
-    id: `PO-2024-${Math.floor(Math.random() * 10000)}`,
-  };
-  purchaseOrders.unshift(newOrder);
-  res.status(201).json(newOrder);
+app.post('/api/orders', async (req, res) => {
+  try {
+    const { vendor, item, quantity, unitPrice, totalAmount, orderDate, status } = req.body;
+    const id = `PO-2024-${Math.floor(Math.random() * 10000)}`;
+    const newOrder = await addOrder(id, vendor, item, quantity, unitPrice, totalAmount, orderDate, status || 'open');
+    res.status(201).json(newOrder);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-app.put('/api/orders/:id', (req, res) => {
-  const order = purchaseOrders.find((o) => o.id === req.params.id);
-  if (!order) return res.status(404).json({ error: 'Order not found' });
-  Object.assign(order, req.body);
-  res.json(order);
+app.put('/api/orders/:id', async (req, res) => {
+  try {
+    const { vendor, item, quantity, unitPrice, totalAmount, orderDate, status } = req.body;
+    const updatedOrder = await updateOrder(req.params.id, vendor, item, quantity, unitPrice, totalAmount, orderDate, status);
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-app.delete('/api/orders/:id', (req, res) => {
-  const index = purchaseOrders.findIndex((o) => o.id === req.params.id);
-  if (index === -1) return res.status(404).json({ error: 'Order not found' });
-  purchaseOrders.splice(index, 1);
-  res.json({ message: 'Order deleted' });
+app.delete('/api/orders/:id', async (req, res) => {
+  try {
+    await deleteOrder(req.params.id);
+    res.json({ message: 'Order deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-// Vendors
-app.get('/api/vendors', (req, res) => {
-  res.json(vendors);
+// ===== VENDORS =====
+app.get('/api/vendors', async (req, res) => {
+  try {
+    const vendors = await getVendors();
+    res.json(vendors);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch vendors' });
+  }
 });
 
-app.post('/api/vendors', (req, res) => {
-  const newVendor = { id: Date.now(), ...req.body };
-  vendors.push(newVendor);
-  res.status(201).json(newVendor);
+app.post('/api/vendors', async (req, res) => {
+  try {
+    const { name, contact, city, phone } = req.body;
+    const newVendor = await addVendor(name, contact, city, phone);
+    res.status(201).json(newVendor);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-// Items
-app.get('/api/items', (req, res) => {
-  res.json(items);
+app.put('/api/vendors/:id', async (req, res) => {
+  try {
+    const { name, contact, city, phone } = req.body;
+    const updatedVendor = await updateVendor(req.params.id, name, contact, city, phone);
+    res.json(updatedVendor);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-app.post('/api/items', (req, res) => {
-  const newItem = { id: Date.now(), ...req.body };
-  items.push(newItem);
-  res.status(201).json(newItem);
+// ===== ITEMS =====
+app.get('/api/items', async (req, res) => {
+  try {
+    const items = await getItems();
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
+});
+
+app.post('/api/items', async (req, res) => {
+  try {
+    const { code, name, vendor, unitPrice, unit } = req.body;
+    const newItem = await addItem(code, name, vendor, unitPrice, unit);
+    res.status(201).json(newItem);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put('/api/items/:id', async (req, res) => {
+  try {
+    const { code, name, vendor, unitPrice, unit } = req.body;
+    const updatedItem = await updateItem(req.params.id, code, name, vendor, unitPrice, unit);
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 app.listen(PORT, () => {
