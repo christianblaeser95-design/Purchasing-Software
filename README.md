@@ -4,12 +4,30 @@
 
 ---
 
+## 🏢 Microsoft Dynamics 365 Business Central Integration
+
+Dieses System ist eine **native Erweiterung** für **Microsoft Dynamics 365 Business Central**. 
+
+**Design & Wording:**
+- ✅ **Identisches Designsystem** — Farben, Typografie, Layouts wie D365 BC
+- ✅ **Business Central Terminologie** — "Purchase Orders", "Vendors", "Items", "Postings"
+- ✅ **Konsistente Benutzeroberfläche** — Sidebar Navigation, Cards, Tables, Status Badges
+- ✅ **Native Integration** — Lässt sich nahtlos als D365-Modul integrieren
+
+**Tech Stack:**
+- **Frontend:** React + Vite (D365 BC Design System)
+- **Backend:** Express.js (REST API)
+- **Design Language:** Microsoft Fluent Design + D365 BC Palette
+- **Deployment:** Kann als D365-Add-on oder standalone eingesetzt werden
+
+---
+
 ## 📋 Inhaltsverzeichnis
 
 1. [Benutzer & Authentifizierung](#benutzer--authentifizierung)
-2. [Lieferanten-Management](#lieferanten-management)
-3. [Produkt-Management](#produkt-management)
-4. [Bestellungs-Management](#bestellungs-management)
+2. [Lieferanten-Management (Vendors)](#lieferanten-management)
+3. [Produkt-Management (Items)](#produkt-management)
+4. [Bestellungs-Management (Purchase Orders)](#bestellungs-management)
 5. [Bestellstatus & Workflow](#bestellstatus--workflow)
 6. [Benutzer-Interface](#benutzer-interface)
 7. [Admin-Funktionen](#admin-funktionen)
@@ -56,7 +74,7 @@
 
 ---
 
-## 🏢 Lieferanten-Management
+## 🏢 Lieferanten-Management (Vendors)
 
 ### Lieferanten anzeigen
 **Was:** Der Benutzer kann eine Liste aller verfügbaren Lieferanten sehen.
@@ -98,7 +116,7 @@
 
 ---
 
-## 📦 Produkt-Management
+## 📦 Produkt-Management (Items)
 
 ### Produkte anzeigen
 **Was:** Der Benutzer kann eine Liste aller Produkte sehen, sortierbar nach Lieferant.
@@ -148,7 +166,7 @@
 
 ---
 
-## 📋 Bestellungs-Management
+## 📋 Bestellungs-Management (Purchase Orders)
 
 ### Bestellungen anzeigen
 **Was:** Der eingeloggte Benutzer sieht eine Tabelle aller seiner Bestellungen.

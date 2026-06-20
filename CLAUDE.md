@@ -26,7 +26,7 @@ eslint.config.js    — Code-Style
 ```bash
 npm run dev              # Frontend + Backend gleichzeitig starten
 npm run dev:frontend    # Nur Frontend (http://localhost:5173)
-npm run dev:backend     # Nur Backend (http://localhost:5000)
+npm run dev:backend     # Nur Backend (http://localhost:3001)
 npm run build           # Frontend für Production bauen
 npm run lint            # ESLint + Auto-Fix
 npm run format          # Prettier Formatting
@@ -50,8 +50,8 @@ npm run format          # Prettier Formatting
 
 ## 🔧 Konfiguration
 
-- **Ports:** Backend (5000), Frontend (5173)
-- **API Proxy:** Frontend → `/api/*` wird zu `http://localhost:5000/api/*`
+- **Ports:** Backend (3001), Frontend (5173)
+- **API Proxy:** Frontend → `/api/*` wird zu `http://localhost:3001/api/*`
 - **Umgebungsvariablen:** `.env` (ignored), siehe `.env.example`
 
 ## 📝 Code-Style
