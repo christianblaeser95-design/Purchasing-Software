@@ -29,23 +29,21 @@ export function TopVendorsBySpendChart({ orders = [] }) {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 80 }}>
+      <BarChart data={data} margin={{ top: 20, right: 20, left: 0, bottom: 60 }} layout="vertical">
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
+        <XAxis type="number" label={{ value: 'Amount (€)', position: 'insideBottomRight', offset: -5 }} />
+        <YAxis
           dataKey="vendor"
-          angle={-45}
-          textAnchor="end"
-          height={100}
+          type="category"
+          width={150}
+          tick={{ fontSize: 11 }}
           interval={0}
-          tick={{ fontSize: 12 }}
         />
-        <YAxis label={{ value: 'Amount (€)', angle: -90, position: 'insideLeft' }} />
         <Tooltip
           formatter={(value) => `€${value.toFixed(2)}`}
           labelFormatter={(label) => `Vendor: ${label}`}
         />
-        <Legend />
-        <Bar dataKey="spend" fill="#0078d4" name="Total Spend" radius={[8, 8, 0, 0]} />
+        <Bar dataKey="spend" fill="#0078d4" radius={[0, 8, 8, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
