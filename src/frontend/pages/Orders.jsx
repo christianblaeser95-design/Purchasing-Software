@@ -1,7 +1,7 @@
 import { Card } from '../components/Card';
 import { StatusBadge } from '../components/StatusBadge';
 
-export function Orders({ orders = [] }) {
+export function Orders({ orders = [], onNewOrder }) {
   return (
     <>
       <Card title="Purchase Orders">
@@ -54,7 +54,9 @@ export function Orders({ orders = [] }) {
       </Card>
 
       <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-        <button className="btn btn-primary">➕ New Purchase Order</button>
+        <button className="btn btn-primary" onClick={onNewOrder}>
+          ➕ New Purchase Order
+        </button>
         <button className="btn btn-secondary">📥 Import</button>
         <button className="btn btn-secondary">📤 Export</button>
       </div>

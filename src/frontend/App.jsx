@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
+import { Modal } from './components/Modal';
+import { NewOrderForm } from './components/NewOrderForm';
 import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Vendors } from './pages/Vendors';
@@ -9,7 +11,8 @@ import './styles.css';
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const [orders] = useState([
+  const [showNewOrderModal, setShowNewOrderModal] = useState(false);
+  const [orders, setOrders] = useState([
     {
       id: 'PO-2024-001',
       vendor: 'Tech Solutions GmbH',
@@ -40,26 +43,49 @@ export default function App() {
     items: 'Items',
   };
 
+  const handleNewOrder = (newOrder) => {
+    setOrders((prev) => [newOrder, ...prev]);
+    setShowNewOrderModal(false);
+  };
+
   const renderPage = () => {
     switch (activeMenu) {
       case 'dashboard':
-        return <Dashboard orders={orders} />;
+        return <Dashboard orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'purchasing':
         return <Purchasing />;
       case 'orders':
-        return <Orders orders={orders} />;
+        return <Orders orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'vendors':
         return <Vendors />;
       case 'items':
         return <Items />;
       default:
-        return <Dashboard orders={orders} />;
+        return <Dashboard orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
     }
   };
 
   return (
-    <Layout activeMenu={activeMenu} onMenuChange={setActiveMenu} title={pageTitles[activeMenu]}>
-      {renderPage()}
-    </Layout>
+    <>
+      <Layout activeMenu={activeMenu} onMenuChange={setActiveMenu} title={pageTitles[activeMenu]}>
+        {renderPage()}
+      </Layout>
+
+      {/* New Order Modal */}
+      <Modal
+        isOpen={showNewOrderModal}
+        title="Create New Purchase Order"
+        onClose={() => setShowNewOrderModal(false)}
+        footer={
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <button className="btn btn-secondary" onClick={() => setShowNewOrderModal(false)}>
+              Cancel
+            </button>
+          </div>
+        }
+      >
+        <NewOrderForm onSubmit={handleNewOrder} onCancel={() => setShowNewOrderModal(false)} />
+      </Modal>
+    </>
   );
 }

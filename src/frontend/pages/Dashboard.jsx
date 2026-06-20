@@ -1,7 +1,7 @@
 import { Card } from '../components/Card';
 import { StatusBadge } from '../components/StatusBadge';
 
-export function Dashboard({ orders = [] }) {
+export function Dashboard({ orders = [], onNewOrder }) {
   const totalOrders = orders.length;
   const pendingOrders = orders.filter((o) => o.status === 'open').length;
   const totalSpend = orders.reduce((sum, o) => sum + o.totalAmount, 0);
@@ -81,7 +81,9 @@ export function Dashboard({ orders = [] }) {
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-        <button className="btn btn-primary">➕ New Purchase Order</button>
+        <button className="btn btn-primary" onClick={onNewOrder}>
+          ➕ New Purchase Order
+        </button>
         <button className="btn btn-secondary">📊 View Reports</button>
       </div>
     </>
