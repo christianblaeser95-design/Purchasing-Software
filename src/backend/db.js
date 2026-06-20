@@ -1,48 +1,17 @@
-import { sql } from '@vercel/postgres';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL || `https://gzthqxxjxmvopskdtowr.supabase.co`;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseKey) {
+  console.error('❌ SUPABASE_ANON_KEY is not set');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function initializeDatabase() {
   try {
-    // Create vendors table
-    await sql`
-      CREATE TABLE IF NOT EXISTS vendors (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL UNIQUE,
-        contact VARCHAR(255),
-        city VARCHAR(100),
-        phone VARCHAR(20),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    // Create items table
-    await sql`
-      CREATE TABLE IF NOT EXISTS items (
-        id SERIAL PRIMARY KEY,
-        code VARCHAR(50) NOT NULL UNIQUE,
-        name VARCHAR(255) NOT NULL,
-        vendor VARCHAR(255) NOT NULL,
-        unit_price DECIMAL(10, 2) NOT NULL,
-        unit VARCHAR(50),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    // Create orders table
-    await sql`
-      CREATE TABLE IF NOT EXISTS orders (
-        id VARCHAR(50) PRIMARY KEY,
-        vendor VARCHAR(255) NOT NULL,
-        item VARCHAR(255) NOT NULL,
-        quantity INT NOT NULL,
-        unit_price DECIMAL(10, 2) NOT NULL,
-        total_amount DECIMAL(12, 2) NOT NULL,
-        order_date DATE NOT NULL,
-        status VARCHAR(50) DEFAULT 'open',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    console.log('✅ Database tables initialized successfully');
+    console.log('✅ Connected to Supabase');
   } catch (error) {
     console.error('❌ Database initialization error:', error);
     throw error;
@@ -51,8 +20,9 @@ export async function initializeDatabase() {
 
 export async function getVendors() {
   try {
-    const result = await sql`SELECT * FROM vendors ORDER BY created_at DESC;`;
-    return result.rows;
+    const { data, error } = await supabase.from('vendors').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   } catch (error) {
     console.error('Database error:', error);
     return [];
@@ -61,12 +31,12 @@ export async function getVendors() {
 
 export async function addVendor(name, contact, city, phone) {
   try {
-    const result = await sql`
-      INSERT INTO vendors (name, contact, city, phone)
-      VALUES (${name}, ${contact}, ${city}, ${phone})
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('vendors')
+      .insert([{ name, contact, city, phone }])
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -75,13 +45,13 @@ export async function addVendor(name, contact, city, phone) {
 
 export async function updateVendor(id, name, contact, city, phone) {
   try {
-    const result = await sql`
-      UPDATE vendors
-      SET name = ${name}, contact = ${contact}, city = ${city}, phone = ${phone}
-      WHERE id = ${id}
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('vendors')
+      .update({ name, contact, city, phone })
+      .eq('id', id)
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -90,8 +60,9 @@ export async function updateVendor(id, name, contact, city, phone) {
 
 export async function getItems() {
   try {
-    const result = await sql`SELECT * FROM items ORDER BY created_at DESC;`;
-    return result.rows;
+    const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   } catch (error) {
     console.error('Database error:', error);
     return [];
@@ -100,12 +71,12 @@ export async function getItems() {
 
 export async function addItem(code, name, vendor, unitPrice, unit) {
   try {
-    const result = await sql`
-      INSERT INTO items (code, name, vendor, unit_price, unit)
-      VALUES (${code}, ${name}, ${vendor}, ${unitPrice}, ${unit})
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('items')
+      .insert([{ code, name, vendor, unit_price: unitPrice, unit }])
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -114,13 +85,13 @@ export async function addItem(code, name, vendor, unitPrice, unit) {
 
 export async function updateItem(id, code, name, vendor, unitPrice, unit) {
   try {
-    const result = await sql`
-      UPDATE items
-      SET code = ${code}, name = ${name}, vendor = ${vendor}, unit_price = ${unitPrice}, unit = ${unit}
-      WHERE id = ${id}
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('items')
+      .update({ code, name, vendor, unit_price: unitPrice, unit })
+      .eq('id', id)
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -129,8 +100,9 @@ export async function updateItem(id, code, name, vendor, unitPrice, unit) {
 
 export async function getOrders() {
   try {
-    const result = await sql`SELECT * FROM orders ORDER BY created_at DESC;`;
-    return result.rows.map((row) => ({
+    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []).map((row) => ({
       id: row.id,
       vendor: row.vendor,
       item: row.item,
@@ -148,12 +120,12 @@ export async function getOrders() {
 
 export async function addOrder(id, vendor, item, quantity, unitPrice, totalAmount, orderDate, status) {
   try {
-    const result = await sql`
-      INSERT INTO orders (id, vendor, item, quantity, unit_price, total_amount, order_date, status)
-      VALUES (${id}, ${vendor}, ${item}, ${quantity}, ${unitPrice}, ${totalAmount}, ${orderDate}, ${status})
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('orders')
+      .insert([{ id, vendor, item, quantity, unit_price: unitPrice, total_amount: totalAmount, order_date: orderDate, status }])
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -162,14 +134,13 @@ export async function addOrder(id, vendor, item, quantity, unitPrice, totalAmoun
 
 export async function updateOrder(id, vendor, item, quantity, unitPrice, totalAmount, orderDate, status) {
   try {
-    const result = await sql`
-      UPDATE orders
-      SET vendor = ${vendor}, item = ${item}, quantity = ${quantity}, unit_price = ${unitPrice},
-          total_amount = ${totalAmount}, order_date = ${orderDate}, status = ${status}
-      WHERE id = ${id}
-      RETURNING *;
-    `;
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ vendor, item, quantity, unit_price: unitPrice, total_amount: totalAmount, order_date: orderDate, status })
+      .eq('id', id)
+      .select();
+    if (error) throw error;
+    return data[0];
   } catch (error) {
     console.error('Database error:', error);
     throw error;
@@ -178,7 +149,8 @@ export async function updateOrder(id, vendor, item, quantity, unitPrice, totalAm
 
 export async function deleteOrder(id) {
   try {
-    await sql`DELETE FROM orders WHERE id = ${id};`;
+    const { error } = await supabase.from('orders').delete().eq('id', id);
+    if (error) throw error;
     return true;
   } catch (error) {
     console.error('Database error:', error);
