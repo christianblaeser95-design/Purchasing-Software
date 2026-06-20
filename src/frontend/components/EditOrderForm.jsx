@@ -16,6 +16,7 @@ const mockItems = [
 export function EditOrderForm({ order, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
     quantity: order.quantity,
+    status: order.status,
   });
 
   const [error, setError] = useState('');
@@ -24,7 +25,7 @@ export function EditOrderForm({ order, onSubmit, onCancel }) {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: parseInt(value) || 0,
+      [name]: name === 'quantity' ? parseInt(value) || 0 : value,
     }));
     setError('');
   };
@@ -44,6 +45,7 @@ export function EditOrderForm({ order, onSubmit, onCancel }) {
       ...order,
       quantity: formData.quantity,
       totalAmount: totalAmount,
+      status: formData.status,
     };
 
     onSubmit(updatedOrder);
@@ -103,6 +105,16 @@ export function EditOrderForm({ order, onSubmit, onCancel }) {
         >
           €{totalAmount.toFixed(2)}
         </div>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Status</label>
+        <select className="form-control" name="status" value={formData.status} onChange={handleChange}>
+          <option value="open">🔴 Open</option>
+          <option value="confirmed">🟠 Confirmed</option>
+          <option value="shipped">🔵 Shipped</option>
+          <option value="received">🟢 Received</option>
+        </select>
       </div>
 
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
