@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
-import { Card } from './components/Card';
-import { StatusBadge } from './components/StatusBadge';
+import { Dashboard } from './pages/Dashboard';
+import { Orders } from './pages/Orders';
+import { Vendors } from './pages/Vendors';
+import { Items } from './pages/Items';
+import { Purchasing } from './pages/Purchasing';
 import './styles.css';
 
 export default function App() {
-  const [backendStatus, setBackendStatus] = useState('Loading...');
-  const [orders, setOrders] = useState([
+  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [orders] = useState([
     {
       id: 'PO-2024-001',
       vendor: 'Tech Solutions GmbH',
@@ -29,93 +32,34 @@ export default function App() {
     },
   ]);
 
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setBackendStatus(data.status))
-      .catch(() => setBackendStatus('Backend nicht erreichbar'));
-  }, []);
+  const pageTitles = {
+    dashboard: 'Dashboard',
+    purchasing: 'Purchasing Module',
+    orders: 'Purchase Orders',
+    vendors: 'Vendors',
+    items: 'Items',
+  };
+
+  const renderPage = () => {
+    switch (activeMenu) {
+      case 'dashboard':
+        return <Dashboard orders={orders} />;
+      case 'purchasing':
+        return <Purchasing />;
+      case 'orders':
+        return <Orders orders={orders} />;
+      case 'vendors':
+        return <Vendors />;
+      case 'items':
+        return <Items />;
+      default:
+        return <Dashboard orders={orders} />;
+    }
+  };
 
   return (
-    <Layout>
-      {/* Dashboard Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <Card title="Total Orders">
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#0078d4' }}>
-            {orders.length}
-          </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>This Month</div>
-        </Card>
-
-        <Card title="Pending Orders">
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffb900' }}>
-            {orders.filter((o) => o.status === 'open').length}
-          </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>Awaiting Confirmation</div>
-        </Card>
-
-        <Card title="Total Spend">
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#107c10' }}>
-            €{orders.reduce((sum, o) => sum + o.totalAmount, 0).toLocaleString()}
-          </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>This Period</div>
-        </Card>
-
-        <Card title="System Status">
-          <div style={{ fontSize: '12px', color: '#666' }}>{backendStatus}</div>
-        </Card>
-      </div>
-
-      {/* Recent Orders Table */}
-      <Card title="Recent Purchase Orders">
-        <table className="d365-table">
-          <thead>
-            <tr>
-              <th>Order No.</th>
-              <th>Vendor</th>
-              <th>Item Description</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Total Amount</th>
-              <th>Order Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td>
-                  <strong>{order.id}</strong>
-                </td>
-                <td>{order.vendor}</td>
-                <td>{order.item}</td>
-                <td>{order.quantity}</td>
-                <td>€{order.unitPrice.toFixed(2)}</td>
-                <td>
-                  <strong>€{order.totalAmount.toFixed(2)}</strong>
-                </td>
-                <td>{order.orderDate}</td>
-                <td>
-                  <StatusBadge status={order.status} />
-                </td>
-                <td>
-                  <button className="btn btn-secondary" style={{ fontSize: '12px', padding: '4px 8px' }}>
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-
-      {/* Action Buttons */}
-      <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-        <button className="btn btn-primary">➕ New Purchase Order</button>
-        <button className="btn btn-secondary">📊 View Reports</button>
-        <button className="btn btn-secondary">⚙️ Settings</button>
-      </div>
+    <Layout activeMenu={activeMenu} onMenuChange={setActiveMenu} title={pageTitles[activeMenu]}>
+      {renderPage()}
     </Layout>
   );
 }

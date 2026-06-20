@@ -1,16 +1,12 @@
-import { useState } from 'react';
 import '../styles.css';
 
-export function Layout({ children }) {
-  const [activeMenu, setActiveMenu] = useState('dashboard');
-
+export function Layout({ activeMenu, onMenuChange, children, title }) {
   const menuItems = [
-    { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
-    { id: 'purchasing', label: '🛒 Purchasing', icon: '🛒' },
-    { id: 'orders', label: '📋 Orders', icon: '📋' },
-    { id: 'vendors', label: '🏢 Vendors', icon: '🏢' },
-    { id: 'items', label: '📦 Items', icon: '📦' },
-    { id: 'accounts', label: '👤 My Account', icon: '👤' },
+    { id: 'dashboard', label: '📊 Dashboard' },
+    { id: 'purchasing', label: '🛒 Purchasing' },
+    { id: 'orders', label: '📋 Orders' },
+    { id: 'vendors', label: '🏢 Vendors' },
+    { id: 'items', label: '📦 Items' },
   ];
 
   return (
@@ -25,7 +21,7 @@ export function Layout({ children }) {
             <div
               key={item.id}
               className={`d365-sidebar-item ${activeMenu === item.id ? 'active' : ''}`}
-              onClick={() => setActiveMenu(item.id)}
+              onClick={() => onMenuChange(item.id)}
             >
               {item.label}
             </div>
@@ -37,10 +33,9 @@ export function Layout({ children }) {
       <div className="d365-main">
         {/* Header */}
         <header className="d365-header">
-          <h1 className="d365-header-title">Einkäufer-Bestellverwaltung</h1>
+          <h1 className="d365-header-title">{title || 'Einkäufer-Bestellverwaltung'}</h1>
           <div className="d365-header-actions">
             <button className="btn btn-secondary">Help</button>
-            <button className="btn btn-secondary">Logout</button>
           </div>
         </header>
 
