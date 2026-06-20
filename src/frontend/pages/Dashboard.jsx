@@ -1,5 +1,7 @@
 import { Card } from '../components/Card';
 import { StatusBadge } from '../components/StatusBadge';
+import { OrdersByStatusChart } from '../components/OrdersByStatusChart';
+import { TopVendorsBySpendChart } from '../components/TopVendorsBySpendChart';
 
 export function Dashboard({ orders = [] }) {
   const totalOrders = orders.length;
@@ -36,6 +38,24 @@ export function Dashboard({ orders = [] }) {
 
         <Card title="System Status">
           <div style={{ fontSize: '12px', color: '#666' }}>✅ All Systems Operational</div>
+        </Card>
+      </div>
+
+      {/* Charts Section */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: '16px',
+          marginBottom: '24px',
+        }}
+      >
+        <Card title="Orders by Status">
+          <OrdersByStatusChart orders={orders} />
+        </Card>
+
+        <Card title="Top Vendors by Spend">
+          <TopVendorsBySpendChart orders={orders} />
         </Card>
       </div>
 
