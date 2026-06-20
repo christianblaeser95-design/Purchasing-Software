@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { Modal } from './components/Modal';
 import { NewOrderForm } from './components/NewOrderForm';
 import { NewVendorForm } from './components/NewVendorForm';
+import { NewItemForm } from './components/NewItemForm';
 import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Vendors } from './pages/Vendors';
@@ -14,6 +15,7 @@ export default function App() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const [showNewVendorModal, setShowNewVendorModal] = useState(false);
+  const [showNewItemModal, setShowNewItemModal] = useState(false);
 
   const [orders, setOrders] = useState([
     {
@@ -44,6 +46,13 @@ export default function App() {
     { id: 3, name: 'Hardware Express', contact: 'support@hardwareexpress.de', city: 'Frankfurt', phone: '+49 69 345678' },
   ]);
 
+  const [items, setItems] = useState([
+    { id: 1, code: 'LAPTOP-001', name: 'Laptops Dell', vendor: 'Tech Solutions GmbH', unitPrice: 800, unit: 'Stück' },
+    { id: 2, code: 'PAPER-A4', name: 'Printer Paper A4', vendor: 'Office Supplies Ltd', unitPrice: 4.5, unit: 'Ream' },
+    { id: 3, code: 'MONITOR-27', name: 'Monitor 27" 4K', vendor: 'Tech Solutions GmbH', unitPrice: 450, unit: 'Stück' },
+    { id: 4, code: 'MOUSE-WIRELESS', name: 'Wireless Mouse', vendor: 'Hardware Express', unitPrice: 25, unit: 'Stück' },
+  ]);
+
   const pageTitles = {
     dashboard: 'Dashboard',
     purchasing: 'Purchasing Module',
@@ -62,6 +71,11 @@ export default function App() {
     setShowNewVendorModal(false);
   };
 
+  const handleNewItem = (newItem) => {
+    setItems((prev) => [newItem, ...prev]);
+    setShowNewItemModal(false);
+  };
+
   const renderPage = () => {
     switch (activeMenu) {
       case 'dashboard':
@@ -73,7 +87,7 @@ export default function App() {
       case 'vendors':
         return <Vendors vendors={vendors} onNewVendor={() => setShowNewVendorModal(true)} />;
       case 'items':
-        return <Items />;
+        return <Items items={items} onNewItem={() => setShowNewItemModal(true)} />;
       default:
         return <Dashboard orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
     }
@@ -101,6 +115,15 @@ export default function App() {
         onClose={() => setShowNewVendorModal(false)}
       >
         <NewVendorForm onSubmit={handleNewVendor} onCancel={() => setShowNewVendorModal(false)} />
+      </Modal>
+
+      {/* New Item Modal */}
+      <Modal
+        isOpen={showNewItemModal}
+        title="Create New Item"
+        onClose={() => setShowNewItemModal(false)}
+      >
+        <NewItemForm onSubmit={handleNewItem} onCancel={() => setShowNewItemModal(false)} />
       </Modal>
     </>
   );

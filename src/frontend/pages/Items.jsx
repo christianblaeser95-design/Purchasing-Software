@@ -1,13 +1,6 @@
 import { Card } from '../components/Card';
 
-const mockItems = [
-  { id: 1, code: 'LAPTOP-001', name: 'Laptops Dell', vendor: 'Tech Solutions GmbH', unitPrice: 800, unit: 'Stück' },
-  { id: 2, code: 'PAPER-A4', name: 'Printer Paper A4', vendor: 'Office Supplies Ltd', unitPrice: 4.5, unit: 'Ream' },
-  { id: 3, code: 'MONITOR-27', name: 'Monitor 27" 4K', vendor: 'Tech Solutions GmbH', unitPrice: 450, unit: 'Stück' },
-  { id: 4, code: 'MOUSE-WIRELESS', name: 'Wireless Mouse', vendor: 'Hardware Express', unitPrice: 25, unit: 'Stück' },
-];
-
-export function Items() {
+export function Items({ items = [], onNewItem }) {
   return (
     <>
       <Card title="Items (Catalog)">
@@ -23,7 +16,7 @@ export function Items() {
             </tr>
           </thead>
           <tbody>
-            {mockItems.map((item) => (
+            {items.map((item) => (
               <tr key={item.id}>
                 <td>
                   <strong>{item.code}</strong>
@@ -44,7 +37,9 @@ export function Items() {
       </Card>
 
       <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-        <button className="btn btn-primary">➕ New Item</button>
+        <button className="btn btn-primary" onClick={onNewItem}>
+          ➕ New Item
+        </button>
         <button className="btn btn-secondary">📥 Import Items</button>
       </div>
     </>
