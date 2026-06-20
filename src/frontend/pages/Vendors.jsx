@@ -1,6 +1,6 @@
 import { Card } from '../components/Card';
 
-export function Vendors({ vendors = [], onNewVendor }) {
+export function Vendors({ vendors = [], onNewVendor, onEditVendor }) {
   return (
     <>
       <Card title="Vendors (Master Data)">
@@ -26,7 +26,11 @@ export function Vendors({ vendors = [], onNewVendor }) {
                 <td>{vendor.city}</td>
                 <td>{vendor.phone}</td>
                 <td>
-                  <button className="btn btn-secondary" style={{ fontSize: '12px', padding: '4px 8px' }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ fontSize: '12px', padding: '4px 8px' }}
+                    onClick={() => onEditVendor(vendor)}
+                  >
                     Edit
                   </button>
                 </td>

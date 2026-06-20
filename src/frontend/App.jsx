@@ -4,6 +4,9 @@ import { Modal } from './components/Modal';
 import { NewOrderForm } from './components/NewOrderForm';
 import { NewVendorForm } from './components/NewVendorForm';
 import { NewItemForm } from './components/NewItemForm';
+import { EditOrderForm } from './components/EditOrderForm';
+import { EditVendorForm } from './components/EditVendorForm';
+import { EditItemForm } from './components/EditItemForm';
 import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Vendors } from './pages/Vendors';
@@ -15,6 +18,12 @@ export default function App() {
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const [showNewVendorModal, setShowNewVendorModal] = useState(false);
   const [showNewItemModal, setShowNewItemModal] = useState(false);
+  const [showEditOrderModal, setShowEditOrderModal] = useState(false);
+  const [showEditVendorModal, setShowEditVendorModal] = useState(false);
+  const [showEditItemModal, setShowEditItemModal] = useState(false);
+  const [editingOrder, setEditingOrder] = useState(null);
+  const [editingVendor, setEditingVendor] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
 
   const [orders, setOrders] = useState([
     {
@@ -74,16 +83,73 @@ export default function App() {
     setShowNewItemModal(false);
   };
 
+  const handleEditOrder = (order) => {
+    setEditingOrder(order);
+    setShowEditOrderModal(true);
+  };
+
+  const handleSaveOrder = (updatedOrder) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o))
+    );
+    setShowEditOrderModal(false);
+    setEditingOrder(null);
+  };
+
+  const handleEditVendor = (vendor) => {
+    setEditingVendor(vendor);
+    setShowEditVendorModal(true);
+  };
+
+  const handleSaveVendor = (updatedVendor) => {
+    setVendors((prev) =>
+      prev.map((v) => (v.id === updatedVendor.id ? updatedVendor : v))
+    );
+    setShowEditVendorModal(false);
+    setEditingVendor(null);
+  };
+
+  const handleEditItem = (item) => {
+    setEditingItem(item);
+    setShowEditItemModal(true);
+  };
+
+  const handleSaveItem = (updatedItem) => {
+    setItems((prev) =>
+      prev.map((i) => (i.id === updatedItem.id ? updatedItem : i))
+    );
+    setShowEditItemModal(false);
+    setEditingItem(null);
+  };
+
   const renderPage = () => {
     switch (activeMenu) {
       case 'dashboard':
         return <Dashboard orders={orders} />;
       case 'orders':
-        return <Orders orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
+        return (
+          <Orders
+            orders={orders}
+            onNewOrder={() => setShowNewOrderModal(true)}
+            onEditOrder={handleEditOrder}
+          />
+        );
       case 'vendors':
-        return <Vendors vendors={vendors} onNewVendor={() => setShowNewVendorModal(true)} />;
+        return (
+          <Vendors
+            vendors={vendors}
+            onNewVendor={() => setShowNewVendorModal(true)}
+            onEditVendor={handleEditVendor}
+          />
+        );
       case 'items':
-        return <Items items={items} onNewItem={() => setShowNewItemModal(true)} />;
+        return (
+          <Items
+            items={items}
+            onNewItem={() => setShowNewItemModal(true)}
+            onEditItem={handleEditItem}
+          />
+        );
       default:
         return <Dashboard orders={orders} />;
     }
@@ -121,6 +187,51 @@ export default function App() {
       >
         <NewItemForm onSubmit={handleNewItem} onCancel={() => setShowNewItemModal(false)} />
       </Modal>
+
+      {/* Edit Order Modal */}
+      {editingOrder && (
+        <Modal
+          isOpen={showEditOrderModal}
+          title="Edit Purchase Order"
+          onClose={() => setShowEditOrderModal(false)}
+        >
+          <EditOrderForm
+            order={editingOrder}
+            onSubmit={handleSaveOrder}
+            onCancel={() => setShowEditOrderModal(false)}
+          />
+        </Modal>
+      )}
+
+      {/* Edit Vendor Modal */}
+      {editingVendor && (
+        <Modal
+          isOpen={showEditVendorModal}
+          title="Edit Vendor"
+          onClose={() => setShowEditVendorModal(false)}
+        >
+          <EditVendorForm
+            vendor={editingVendor}
+            onSubmit={handleSaveVendor}
+            onCancel={() => setShowEditVendorModal(false)}
+          />
+        </Modal>
+      )}
+
+      {/* Edit Item Modal */}
+      {editingItem && (
+        <Modal
+          isOpen={showEditItemModal}
+          title="Edit Item"
+          onClose={() => setShowEditItemModal(false)}
+        >
+          <EditItemForm
+            item={editingItem}
+            onSubmit={handleSaveItem}
+            onCancel={() => setShowEditItemModal(false)}
+          />
+        </Modal>
+      )}
     </>
   );
 }

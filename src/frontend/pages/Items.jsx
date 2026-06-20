@@ -1,6 +1,6 @@
 import { Card } from '../components/Card';
 
-export function Items({ items = [], onNewItem }) {
+export function Items({ items = [], onNewItem, onEditItem }) {
   return (
     <>
       <Card title="Items (Catalog)">
@@ -26,7 +26,11 @@ export function Items({ items = [], onNewItem }) {
                 <td>€{item.unitPrice.toFixed(2)}</td>
                 <td>{item.unit}</td>
                 <td>
-                  <button className="btn btn-secondary" style={{ fontSize: '12px', padding: '4px 8px' }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ fontSize: '12px', padding: '4px 8px' }}
+                    onClick={() => onEditItem(item)}
+                  >
                     Edit
                   </button>
                 </td>
