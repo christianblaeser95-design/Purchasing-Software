@@ -8,7 +8,6 @@ import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Vendors } from './pages/Vendors';
 import { Items } from './pages/Items';
-import { Purchasing } from './pages/Purchasing';
 import './styles.css';
 
 export default function App() {
@@ -55,7 +54,6 @@ export default function App() {
 
   const pageTitles = {
     dashboard: 'Dashboard',
-    purchasing: 'Purchasing Module',
     orders: 'Purchase Orders',
     vendors: 'Vendors',
     items: 'Items',
@@ -80,8 +78,6 @@ export default function App() {
     switch (activeMenu) {
       case 'dashboard':
         return <Dashboard orders={orders} />;
-      case 'purchasing':
-        return <Purchasing onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'orders':
         return <Orders orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'vendors':

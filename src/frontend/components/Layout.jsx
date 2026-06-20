@@ -3,7 +3,6 @@ import '../styles.css';
 export function Layout({ activeMenu, onMenuChange, children, title }) {
   const menuItems = [
     { id: 'dashboard', label: '📊 Dashboard' },
-    { id: 'purchasing', label: '🛒 Purchasing' },
     { id: 'orders', label: '📋 Orders' },
     { id: 'vendors', label: '🏢 Vendors' },
     { id: 'items', label: '📦 Items' },
