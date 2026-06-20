@@ -79,9 +79,9 @@ export default function App() {
   const renderPage = () => {
     switch (activeMenu) {
       case 'dashboard':
-        return <Dashboard orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
+        return <Dashboard orders={orders} />;
       case 'purchasing':
-        return <Purchasing />;
+        return <Purchasing onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'orders':
         return <Orders orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
       case 'vendors':
@@ -89,7 +89,7 @@ export default function App() {
       case 'items':
         return <Items items={items} onNewItem={() => setShowNewItemModal(true)} />;
       default:
-        return <Dashboard orders={orders} onNewOrder={() => setShowNewOrderModal(true)} />;
+        return <Dashboard orders={orders} />;
     }
   };
 

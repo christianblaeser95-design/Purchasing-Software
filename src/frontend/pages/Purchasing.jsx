@@ -1,6 +1,6 @@
 import { Card } from '../components/Card';
 
-export function Purchasing() {
+export function Purchasing({ onNewOrder }) {
   return (
     <>
       <Card title="Purchasing Module">
@@ -94,7 +94,9 @@ export function Purchasing() {
 
       <Card title="Quick Actions" style={{ marginTop: '24px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary">➕ New Purchase Order</button>
+          <button className="btn btn-primary" onClick={onNewOrder}>
+            ➕ New Purchase Order
+          </button>
           <button className="btn btn-secondary">📊 View Open Orders</button>
           <button className="btn btn-secondary">📤 Export Data</button>
         </div>
